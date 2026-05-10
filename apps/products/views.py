@@ -19,6 +19,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     permission_classes = [AllowAny]
 
+    print("CI pipeline test changes")
+
 
 class ProductViewSet(viewsets.ModelViewSet):
 
