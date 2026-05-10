@@ -111,9 +111,9 @@ jobs:
       - name: Tag Docker Image
         run: |
           docker tag ecommerce-backend:latest \
-          ${{ secrets.AWS_SECRET_ACCESS_KEY }}.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-backend:${{ github.sha }}
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-backend:${{ github.sha }}
 
       - name: Push Docker Image
         run: |
           docker push \
-          ${{ secrets.AWS_SECRET_ACCESS_KEY }}.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-backend:${{ github.sha }}
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-backend:${{ github.sha }}
