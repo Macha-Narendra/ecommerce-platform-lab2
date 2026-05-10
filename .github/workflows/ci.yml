@@ -1,0 +1,83 @@
+name: Django CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    services:
+
+      postgres:
+        image: postgres:16
+
+        env:
+          POSTGRES_DB: ecommerce
+          POSTGRES_USER: ecomuser
+          POSTGRES_PASSWORD: ecompassword
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+
+        ports:
+          - 6379:6379
+
+    env:
+      SECRET_KEY: django-insecure-ci-key
+      DEBUG: True
+
+      ALLOWED_HOSTS: localhost,127.0.0.1
+
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: ecomuser
+      POSTGRES_PASSWORD: ecompassword
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Migrations
+        run: |
+          python manage.py migrate
+
+      - name: Run Tests
+        run: |
+          python manage.py test
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ecommerce-backend .
